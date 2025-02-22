@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-spark-app
+  namespace: spark-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask-spark-app
+  template:
+    metadata:
+      labels:
+        app: flask-spark-app
+    spec:
+      containers:
+        - name: flask-spark-app
+          image: flask-spark-app:latest
+          ports:
+            - containerPort: 5000
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-spark-app
+  namespace: spark-operator
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  selector:
+    app: flask-spark-app

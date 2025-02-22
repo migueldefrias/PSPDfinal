@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordcount-webserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wordcount-webserver
+  template:
+    metadata:
+      labels:
+        app: wordcount-webserver
+    spec:
+      containers:
+      - name: webserver
+        image: wordcount-webserver-2:latest
+        ports:
+        - containerPort: 5000
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordcount-service
+spec:
+  selector:
+    app: wordcount-webserver
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
